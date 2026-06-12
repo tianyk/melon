@@ -22,7 +22,7 @@ resources/     应用图标等静态资源
 ```text
 AGENTS.md
 > docs/melon-mvp-tech-plan.md
-> README.md + 关键配置文件
+> docs/development.md
 > existing code
 ```
 
@@ -32,8 +32,9 @@ AGENTS.md
 - 同一迭代中修正旧代码
 
 文档职责约束：
-- `docs/melon-mvp-tech-plan.md` 属于技术方案文档，不得在普通功能实现、缺陷修复中直接修改
-- 如需调整技术选型、架构决策、产品定位，必须更新 `docs/melon-mvp-tech-plan.md`
+- `README.md` 面向用户，只包含产品介绍、安装方式、配置说明，不得写入技术实现细节
+- `docs/melon-mvp-tech-plan.md` 属于技术方案文档，不得在普通功能实现、缺陷修复中直接修改；如需调整技术选型、架构决策、产品定位，必须更新此文档
+- `docs/development.md` 属于开发者上手文档，记录项目结构、IPC 架构、开发流程；项目结构变更时必须同步更新
 - 预装技能的行为描述归属 `skills/<name>/SKILL.md`，不得写入其他文档
 
 ### 0.1 Agent Memory Protocol（REQUIRED）
@@ -651,7 +652,8 @@ FORBIDDEN
 | Task | Read |
 |------|------|
 | 了解产品定位 / 技术选型 | `docs/melon-mvp-tech-plan.md` |
-| 新增 IPC 通道 | `src/types/ipc.ts` → `src/main/bridge.ts` → `src/main/preload.ts` |
+| 上手开发 / 了解项目结构 | `docs/development.md` → `AGENTS.md` |
+| 新增 IPC 通道 | `docs/development.md#ipc-架构` → `src/types/ipc.ts` → `src/main/bridge.ts` → `src/main/preload.ts` |
 | 新增 main process 模块 | `src/main/bridge.ts` + `src/main/preload.ts` |
 | 新增 React 页面 | `src/renderer/src/pages/` → `src/renderer/src/context/AppContext.tsx` |
 | 新增 UI 组件 | `src/renderer/src/components/ui/` → `src/renderer/src/lib/utils.ts` |
@@ -659,7 +661,7 @@ FORBIDDEN
 | 修改样式主题 | `src/renderer/src/styles/globals.css` |
 | 密钥相关 | `src/main/crypto.ts` → `docs/melon-mvp-tech-plan.md#九` |
 | 打包分发 | `electron-builder.config.js` → `electron.vite.config.ts` |
-| IPC 架构理解 | `docs/melon-mvp-tech-plan.md#八` → `src/main/bridge.ts` → `src/main/preload.ts` |
+| IPC 架构理解 | `docs/development.md#ipc-架构` → `docs/melon-mvp-tech-plan.md#八` → `src/main/bridge.ts` |
 
 ---
 
