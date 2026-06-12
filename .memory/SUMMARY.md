@@ -16,6 +16,7 @@
 - Tailwind CSS v4（CSS-first @theme 配置）
 - shadcn/ui 风格组件（非 Ant Design）
 - 组件 PascalCase，hook camelCase(use前缀)，工具 kebab-case
+- Renderer 原生能力调用应收敛到 Melon SDK facade，避免业务组件直接依赖 window.Melon
 
 ## Active Repo Conventions
 - 类型定义在 src/types/ipc.ts，通道常量在 IPC_CHANNELS

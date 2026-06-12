@@ -18,6 +18,7 @@
 
 pnpm install
 pnpm dev        # 启动开发环境
+pnpm dev:renderer  # 仅启动前端 dev server（使用 Melon dev mock）
 pnpm build      # 构建
 pnpm lint       # TypeScript 类型检查
 pnpm package:mac  # 打包 macOS dmg
@@ -28,7 +29,7 @@ pnpm package:mac  # 打包 macOS dmg
 ```
 melon/
 ├── src/
-│   ├── types/ipc.ts              # IPC 类型定义、通道常量
+│   ├── types/ipc.ts              # IPC 类型定义、通道常量、MelonApi 契约
 │   ├── main/
 │   │   ├── main.ts               # Electron 入口（窗口、生命周期）
 │   │   ├── bridge.ts             # IPC 注册（wrap 统一错误处理）
@@ -52,7 +53,7 @@ melon/
 │           │   └── input/        # 输入框、技能按钮
 │           ├── pages/            # 页面级组件
 │           ├── styles/           # Tailwind + 主题变量
-│           └── lib/              # 工具函数
+│           └── lib/              # 工具函数、Melon SDK facade、dev mock
 ├── skills/                       # 预装技能 SKILL.md
 ├── resources/                    # 应用图标
 ├── docs/
@@ -66,7 +67,8 @@ melon/
 采用 Bridge + Preload + ContextBridge 三层架构：
 
 ```text
-Renderer（window.Melon.xxx()）
+Renderer（melon-sdk）
+  → Electron: window.Melon / Renderer-only: dev mock
   → Preload（unwrap → ipcRenderer.invoke）
     → Bridge（wrap → ipcMain.handle）
       → Manager（harness/mcp/settings）
@@ -78,7 +80,7 @@ Renderer（window.Melon.xxx()）
 
 - **Bridge**（`src/main/bridge.ts`）：集中注册所有 `ipcMain.handle`，`wrap()` 捕获异常并包装为统一 `{ code, data, message }` 格式
 - **Preload**（`src/main/preload.ts`）：`contextBridge.exposeInMainWorld('Melon', ...)`，`unwrap()` 解包 Result，直接返回数据或抛出错误
-- **Renderer**：通过 `window.Melon` API 调用，事件通过 `window.Melon.on(channel, callback)` 订阅
+- **Renderer**：业务代码通过 `src/renderer/src/lib/melon-sdk.ts` 导出的 `melon` 调用原生能力；Electron 环境走 `window.Melon`，`pnpm dev:renderer` 环境走 dev mock。业务组件不得直接调用 `window.Melon`
 
 ## 数据存储
 

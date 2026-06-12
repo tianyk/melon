@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Search, Settings, MessageSquare } from 'lucide-react'
+import { melon } from '@/lib/melon-sdk'
 
 export default function SessionList() {
   const { state, dispatch } = useAppContext()
@@ -15,27 +16,28 @@ export default function SessionList() {
 
   const handleNewSession = async () => {
     try {
-      const result = await window.Melon.createSession()
-      const data = result as { id?: string }
-      if (data?.id) {
-        dispatch({ domain: 'session', action: { type: 'SET_ACTIVE_SESSION', id: data.id } })
-        dispatch({ domain: 'chat', action: { type: 'CLEAR_MESSAGES' } })
-      }
+      const id = await melon.createSession()
+      dispatch({ domain: 'session', action: { type: 'SET_ACTIVE_SESSION', id } })
+      dispatch({ domain: 'chat', action: { type: 'CLEAR_MESSAGES' } })
       // 重新加载会话列表
-      const sessions = await window.Melon.listSessions()
-      dispatch({ domain: 'session', action: { type: 'SET_SESSIONS', sessions: sessions as any } })
+      const sessions = await melon.listSessions()
+      dispatch({ domain: 'session', action: { type: 'SET_SESSIONS', sessions } })
     } catch {
       // 静默处理
     }
   }
 
   const handleSwitchSession = async (id: string) => {
-    await window.Melon.switchSession(id)
-    dispatch({ domain: 'session', action: { type: 'SET_ACTIVE_SESSION', id } })
-    dispatch({ domain: 'chat', action: { type: 'CLEAR_MESSAGES' } })
-    // 更新 isActive 状态
-    const updated = sessions.map(s => ({ ...s, isActive: s.id === id }))
-    dispatch({ domain: 'session', action: { type: 'SET_SESSIONS', sessions: updated as any } })
+    try {
+      await melon.switchSession(id)
+      dispatch({ domain: 'session', action: { type: 'SET_ACTIVE_SESSION', id } })
+      dispatch({ domain: 'chat', action: { type: 'CLEAR_MESSAGES' } })
+      // 更新 isActive 状态
+      const updated = sessions.map(s => ({ ...s, isActive: s.id === id }))
+      dispatch({ domain: 'session', action: { type: 'SET_SESSIONS', sessions: updated } })
+    } catch {
+      // 静默处理
+    }
   }
 
   const filteredSessions = sessions.filter(
@@ -134,12 +136,12 @@ function SettingsPanel({ onClose }: { onClose: () => void }) {
 
   const handleThemeChange = (theme: 'light' | 'dark') => {
     dispatch({ domain: 'settings', action: { type: 'UPDATE_SETTINGS', partial: { theme } } })
-    window.Melon.setSettings({ theme })
+    void melon.setSettings({ theme })
   }
 
   const handleSaveApiKey = () => {
     if (apiKeyInput.trim()) {
-      window.Melon.setSettings({ apiKeyConfigured: true })
+      void melon.setSettings({ apiKeyConfigured: true })
       dispatch({
         domain: 'settings',
         action: { type: 'UPDATE_SETTINGS', partial: { apiKeyConfigured: true } },
@@ -231,4 +233,3 @@ function formatDate(isoStr: string): string {
     return isoStr
   }
 }
-

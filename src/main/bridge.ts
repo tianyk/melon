@@ -2,7 +2,8 @@ import { ipcMain } from 'electron'
 import type { HarnessManager } from './harness-manager'
 import type { McpManager } from './mcp-manager'
 import { loadSettings, saveSettings } from './settings'
-import type { Result, McpConfig } from '../types/ipc'
+import { IPC_CHANNELS } from '../types/ipc'
+import type { Result, McpConfig, Settings } from '../types/ipc'
 
 function wrap<T extends unknown[]>(
   fn: (...args: T) => Promise<unknown>
@@ -22,62 +23,62 @@ export function registerIpcHandlers(
   mcpManager: McpManager,
 ): void {
   // ---- Agent ----
-  ipcMain.handle('harness:prompt', wrap(async (_e, text: string) => {
+  ipcMain.handle(IPC_CHANNELS.HARNESS_PROMPT, wrap(async (_e, text: string) => {
     await harnessManager.prompt(text)
   }))
 
-  ipcMain.handle('harness:abort', wrap(async () => {
+  ipcMain.handle(IPC_CHANNELS.HARNESS_ABORT, wrap(async () => {
     await harnessManager.abort()
   }))
 
-  ipcMain.handle('harness:skill', wrap(async (_e, name: string) => {
+  ipcMain.handle(IPC_CHANNELS.HARNESS_SKILL, wrap(async (_e, name: string) => {
     await harnessManager.skill(name)
   }))
 
-  ipcMain.handle('harness:steer', wrap(async (_e, text: string) => {
+  ipcMain.handle(IPC_CHANNELS.HARNESS_STEER, wrap(async (_e, text: string) => {
     await harnessManager.steer(text)
   }))
 
-  ipcMain.handle('harness:navigate', wrap(async (_e, targetId: string) => {
+  ipcMain.handle(IPC_CHANNELS.HARNESS_NAVIGATE, wrap(async (_e, targetId: string) => {
     await harnessManager.navigateTree(targetId)
   }))
 
-  ipcMain.handle('harness:compact', wrap(async (_e, instructions?: string) => {
+  ipcMain.handle(IPC_CHANNELS.HARNESS_COMPACT, wrap(async (_e, instructions?: string) => {
     await harnessManager.compact(instructions)
   }))
 
   // ---- Session ----
-  ipcMain.handle('session:list', wrap(async () => {
+  ipcMain.handle(IPC_CHANNELS.SESSION_LIST, wrap(async () => {
     return await harnessManager.listSessions()
   }))
 
-  ipcMain.handle('session:create', wrap(async () => {
+  ipcMain.handle(IPC_CHANNELS.SESSION_CREATE, wrap(async () => {
     return await harnessManager.createSession()
   }))
 
-  ipcMain.handle('session:switch', wrap(async (_e, id: string) => {
+  ipcMain.handle(IPC_CHANNELS.SESSION_SWITCH, wrap(async (_e, id: string) => {
     await harnessManager.switchSession(id)
   }))
 
   // ---- MCP ----
-  ipcMain.handle('mcp:connect', wrap(async (_e, config: McpConfig) => {
+  ipcMain.handle(IPC_CHANNELS.MCP_CONNECT, wrap(async (_e, config: McpConfig) => {
     await mcpManager.connect(config)
   }))
 
-  ipcMain.handle('mcp:disconnect', wrap(async (_e, serverId: string) => {
+  ipcMain.handle(IPC_CHANNELS.MCP_DISCONNECT, wrap(async (_e, serverId: string) => {
     await mcpManager.disconnect(serverId)
   }))
 
-  ipcMain.handle('mcp:list', wrap(async () => {
+  ipcMain.handle(IPC_CHANNELS.MCP_LIST, wrap(async () => {
     return mcpManager.listServers()
   }))
 
   // ---- Settings ----
-  ipcMain.handle('settings:get', wrap(async () => {
+  ipcMain.handle(IPC_CHANNELS.SETTINGS_GET, wrap(async () => {
     return loadSettings()
   }))
 
-  ipcMain.handle('settings:set', wrap(async (_e, partial: Record<string, unknown>) => {
-    saveSettings(partial as Partial<import('../types/ipc').Settings>)
+  ipcMain.handle(IPC_CHANNELS.SETTINGS_SET, wrap(async (_e, partial: Partial<Settings>) => {
+    saveSettings(partial)
   }))
 }

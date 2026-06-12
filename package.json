@@ -5,6 +5,7 @@
   "main": "./out/main/main.js",
   "scripts": {
     "dev": "electron-vite dev",
+    "dev:renderer": "electron-vite --rendererOnly",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
     "package": "electron-builder build --config electron-builder.config.js",

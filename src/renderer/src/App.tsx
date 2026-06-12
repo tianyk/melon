@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import { useAppContext } from '@/context/AppContext'
 import { useAgent } from '@/hooks/useAgent'
-import type { Settings, SessionMeta } from '../../../../types/ipc'
 import Layout from '@/components/layout/Layout'
+import { melon } from '@/lib/melon-sdk'
 
 export default function App() {
-  const { dispatch } = useAppContext()
+  const { state, dispatch } = useAppContext()
 
   // 注册 agent 事件监听
   useAgent()
@@ -14,13 +14,13 @@ export default function App() {
   useEffect(() => {
     async function init() {
       try {
-        const settings = await window.Melon.getSettings() as Settings
+        const settings = await melon.getSettings()
         dispatch({
           domain: 'settings',
           action: { type: 'SET_SETTINGS', settings },
         })
 
-        const sessions = await window.Melon.listSessions() as SessionMeta[]
+        const sessions = await melon.listSessions()
         dispatch({
           domain: 'session',
           action: { type: 'SET_SESSIONS', sessions },
@@ -33,7 +33,7 @@ export default function App() {
   }, [dispatch])
 
   // 应用主题
-  const theme = useAppContext().state.settings.settings.theme
+  const theme = state.settings.settings.theme
   useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.classList.add('dark')

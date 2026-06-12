@@ -1,7 +1,6 @@
 import { BrowserWindow } from 'electron'
-import { loadApiKey } from './crypto'
-import { loadSettings } from './settings'
-import type { SessionMeta } from '../types/ipc'
+import { IPC_CHANNELS } from '../types/ipc'
+import type { MelonEventChannel, MelonEventPayloadMap, SessionMeta } from '../types/ipc'
 
 const SKILLS = [
   { name: 'translate', label: '翻译文本', description: '中英互译，多语种', icon: 'Languages' },
@@ -35,7 +34,7 @@ export class HarnessManager {
     const msgId = crypto.randomUUID()
 
     // 发送 assistant 消息开始的信号
-    this.emit('agent:message-start', {
+    this.emit(IPC_CHANNELS.AGENT_MESSAGE_START, {
       message: { id: msgId, role: 'assistant', content: '' },
     })
 
@@ -47,22 +46,22 @@ export class HarnessManager {
     let accumulated = ''
     for (let i = 0; i < chars.length; i++) {
       accumulated += chars[i]
-      this.emit('agent:message-update', {
+      this.emit(IPC_CHANNELS.AGENT_MESSAGE_UPDATE, {
         message: { id: msgId, role: 'assistant', content: accumulated },
         event: { chunk: chars[i], index: i },
       })
       await delay(15 + Math.random() * 25)
     }
 
-    this.emit('agent:message-end', {
+    this.emit(IPC_CHANNELS.AGENT_MESSAGE_END, {
       message: { id: msgId, role: 'assistant', content: accumulated },
     })
 
-    this.emit('agent:idle', {})
+    this.emit(IPC_CHANNELS.AGENT_IDLE, {})
   }
 
   async abort(): Promise<void> {
-    this.emit('agent:idle', {})
+    this.emit(IPC_CHANNELS.AGENT_IDLE, {})
   }
 
   async skill(name: string): Promise<void> {
@@ -107,7 +106,7 @@ export class HarnessManager {
     this.sessions.unshift(session)
     this.activeSessionId = id
 
-    this.emit('session:tree-updated', { entries: this.sessions, leafId: id })
+    this.emit(IPC_CHANNELS.SESSION_TREE_UPDATED, { entries: this.sessions, leafId: id })
     return id
   }
 
@@ -121,11 +120,14 @@ export class HarnessManager {
       next.isActive = true
       this.activeSessionId = id
     }
-    this.emit('session:tree-updated', { entries: this.sessions, leafId: id })
+    this.emit(IPC_CHANNELS.SESSION_TREE_UPDATED, { entries: this.sessions, leafId: id })
   }
 
   // 事件推送
-  private emit(channel: string, data: unknown): void {
+  private emit<K extends MelonEventChannel>(
+    channel: K,
+    data: MelonEventPayloadMap[K]
+  ): void {
     if (!this.mainWindow.isDestroyed()) {
       this.mainWindow.webContents.send(channel, data)
     }

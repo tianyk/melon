@@ -3,6 +3,7 @@ import { useAppContext } from '@/context/AppContext'
 import { SkillChips } from '@/components/input/SkillChips'
 import { MessageList } from '@/components/chat/MessageList'
 import { ChatInput } from '@/components/input/ChatInput'
+import { melon } from '@/lib/melon-sdk'
 
 export function ChatView() {
   const { state, dispatch } = useAppContext()
@@ -21,10 +22,10 @@ export function ChatView() {
 
     try {
       if (currentSkill) {
-        await window.Melon.skill(currentSkill)
+        await melon.skill(currentSkill)
         dispatch({ domain: 'chat', action: { type: 'SET_SKILL', name: null } })
       } else {
-        await window.Melon.prompt(text)
+        await melon.prompt(text)
       }
     } catch {
       dispatch({ domain: 'chat', action: { type: 'SET_PROCESSING', value: false } })
@@ -32,7 +33,7 @@ export function ChatView() {
   }, [currentSkill, dispatch])
 
   const handleAbort = useCallback(async () => {
-    await window.Melon.abort()
+    await melon.abort()
     dispatch({ domain: 'chat', action: { type: 'SET_PROCESSING', value: false } })
   }, [dispatch])
 

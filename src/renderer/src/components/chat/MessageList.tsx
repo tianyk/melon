@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import type { AgentMessage } from '../../../../../types/ipc'
+import type { AgentMessage } from '@shared/ipc'
 
 interface MessageListProps {
   messages: AgentMessage[]

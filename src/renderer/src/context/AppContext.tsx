@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer } from 'react'
-import type { AgentMessage, Settings, SessionMeta } from '../../../../types/ipc'
+import type { AgentMessage, Settings, SessionMeta } from '@shared/ipc'
 
 // ---- Chat State ----
 interface ChatState {

@@ -167,8 +167,6 @@
 
 ## 八、IPC 架构：Bridge + Preload + ContextBridge
 
-借鉴 vte-desktop 项目的三层架构模式，实现安全、类型化的主进程与渲染进程通信。
-
 ### 目录结构
 
 ```

@@ -56,18 +56,6 @@ export interface ToolCall {
   args: unknown
 }
 
-// Main → Renderer 事件类型
-export type AgentEvent =
-  | { type: 'agent:message-start'; message: AgentMessage }
-  | { type: 'agent:message-update'; message: AgentMessage; event: unknown }
-  | { type: 'agent:message-end'; message: AgentMessage }
-  | { type: 'agent:tool-start'; toolCallId: string; name: string; args: unknown }
-  | { type: 'agent:tool-end'; toolCallId: string; result: unknown; isError: boolean }
-  | { type: 'agent:turn-end'; message: AgentMessage; toolResults: unknown[] }
-  | { type: 'agent:idle' }
-  | { type: 'session:tree-updated'; entries: unknown[]; leafId: string }
-  | { type: 'mcp:status-changed'; serverId: string; status: string }
-
 // IPC 通道名称
 export const IPC_CHANNELS = {
   // Renderer → Main (invoke)
@@ -96,3 +84,52 @@ export const IPC_CHANNELS = {
   SESSION_TREE_UPDATED: 'session:tree-updated',
   MCP_STATUS_CHANGED: 'mcp:status-changed',
 } as const
+
+// Main → Renderer 事件 payload
+export interface MelonEventPayloadMap {
+  [IPC_CHANNELS.AGENT_MESSAGE_START]: { message: AgentMessage }
+  [IPC_CHANNELS.AGENT_MESSAGE_UPDATE]: { message: AgentMessage; event: unknown }
+  [IPC_CHANNELS.AGENT_MESSAGE_END]: { message: AgentMessage }
+  [IPC_CHANNELS.AGENT_TOOL_START]: { toolCallId: string; name: string; args: unknown }
+  [IPC_CHANNELS.AGENT_TOOL_END]: { toolCallId: string; result: unknown; isError: boolean }
+  [IPC_CHANNELS.AGENT_TURN_END]: { message: AgentMessage; toolResults: unknown[] }
+  [IPC_CHANNELS.AGENT_IDLE]: Record<string, never>
+  [IPC_CHANNELS.SESSION_TREE_UPDATED]: { entries: SessionMeta[]; leafId: string }
+  [IPC_CHANNELS.MCP_STATUS_CHANGED]: { serverId: string; status: McpServerInfo['status'] }
+}
+
+export type MelonEventChannel = keyof MelonEventPayloadMap
+
+export type MelonEventCallback<K extends MelonEventChannel> = (
+  data: MelonEventPayloadMap[K]
+) => void
+
+// Main → Renderer 事件类型
+export type AgentEvent = {
+  [K in MelonEventChannel]: { type: K } & MelonEventPayloadMap[K]
+}[MelonEventChannel]
+
+export interface MelonApi {
+  prompt(text: string): Promise<void>
+  abort(): Promise<void>
+  skill(name: string): Promise<void>
+  steer(text: string): Promise<void>
+  navigate(targetId: string): Promise<void>
+  compact(instructions?: string): Promise<void>
+
+  listSessions(): Promise<SessionMeta[]>
+  createSession(): Promise<string>
+  switchSession(id: string): Promise<void>
+
+  connectMcp(config: McpConfig): Promise<void>
+  disconnectMcp(serverId: string): Promise<void>
+  listMcpServers(): Promise<McpServerInfo[]>
+
+  getSettings(): Promise<Settings>
+  setSettings(partial: Partial<Settings>): Promise<void>
+
+  on<K extends MelonEventChannel>(
+    channel: K,
+    callback: MelonEventCallback<K>
+  ): () => void
+}
