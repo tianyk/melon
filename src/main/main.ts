@@ -14,7 +14,7 @@ function createWindow(): void {
 		height: 800,
 		minWidth: 900,
 		minHeight: 600,
-		title: '西瓜',
+		titleBarStyle: 'hiddenInset',
 		webPreferences: {
 			preload: join(__dirname, '../preload/preload.js'),
 			sandbox: true,
