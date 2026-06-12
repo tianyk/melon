@@ -20,7 +20,8 @@ pnpm install
 pnpm dev        # 启动开发环境
 pnpm dev:renderer  # 仅启动前端 dev server（使用 Melon dev mock）
 pnpm build      # 构建
-pnpm lint       # TypeScript 类型检查
+pnpm typecheck  # TypeScript 类型检查
+pnpm lint       # TypeScript 类型检查 + ESLint
 pnpm package:mac  # 打包 macOS dmg
 ```
 

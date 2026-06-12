@@ -17,8 +17,10 @@
 - shadcn/ui 风格组件（非 Ant Design）
 - 组件 PascalCase，hook camelCase(use前缀)，工具 kebab-case
 - Renderer 原生能力调用应收敛到 Melon SDK facade，避免业务组件直接依赖 window.Melon
+- 代码风格要求 tab 缩进、语句结尾分号、禁用 console，由 ESLint `indent: tab` / `semi: always` / `no-console` 校验
 
 ## Active Repo Conventions
 - 类型定义在 src/types/ipc.ts，通道常量在 IPC_CHANNELS
 - 所有 IPC handler 集中 bridge.ts + wrap() 包装
 - UI 状态三域：chat / session / settings，统一 AppContext
+- ESLint 使用 flat config；`pnpm lint` = `pnpm typecheck && eslint .`

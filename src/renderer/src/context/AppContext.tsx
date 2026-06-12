@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useReducer } from 'react'
-import type { AgentMessage, Settings, SessionMeta } from '@shared/ipc'
+import React, { createContext, useContext, useReducer } from 'react';
+import type { AgentMessage, Settings, SessionMeta } from '@shared/ipc';
 
 // ---- Chat State ----
 interface ChatState {
@@ -16,28 +16,28 @@ type ChatAction =
   | { type: 'CLEAR_MESSAGES' }
 
 function chatReducer(state: ChatState, action: ChatAction): ChatState {
-  switch (action.type) {
-    case 'ADD_MESSAGE':
-      return { ...state, messages: [...state.messages, action.message] }
-    case 'UPDATE_LAST_ASSISTANT': {
-      const msgs = [...state.messages]
-      for (let i = msgs.length - 1; i >= 0; i--) {
-        if (msgs[i].role === 'assistant') {
-          msgs[i] = { ...msgs[i], content: action.content }
-          break
-        }
-      }
-      return { ...state, messages: msgs }
-    }
-    case 'SET_PROCESSING':
-      return { ...state, isProcessing: action.value }
-    case 'SET_SKILL':
-      return { ...state, currentSkill: action.name }
-    case 'CLEAR_MESSAGES':
-      return { ...state, messages: [] }
-    default:
-      return state
-  }
+	switch (action.type) {
+		case 'ADD_MESSAGE':
+			return { ...state, messages: [...state.messages, action.message] };
+		case 'UPDATE_LAST_ASSISTANT': {
+			const msgs = [...state.messages];
+			for (let i = msgs.length - 1; i >= 0; i--) {
+				if (msgs[i].role === 'assistant') {
+					msgs[i] = { ...msgs[i], content: action.content };
+					break;
+				}
+			}
+			return { ...state, messages: msgs };
+		}
+		case 'SET_PROCESSING':
+			return { ...state, isProcessing: action.value };
+		case 'SET_SKILL':
+			return { ...state, currentSkill: action.name };
+		case 'CLEAR_MESSAGES':
+			return { ...state, messages: [] };
+		default:
+			return state;
+	}
 }
 
 // ---- Session State ----
@@ -53,21 +53,21 @@ type SessionAction =
   | { type: 'REMOVE_SESSION'; id: string }
 
 function sessionReducer(state: SessionState, action: SessionAction): SessionState {
-  switch (action.type) {
-    case 'SET_SESSIONS':
-      return { ...state, sessions: action.sessions }
-    case 'SET_ACTIVE_SESSION':
-      return { ...state, activeSessionId: action.id }
-    case 'ADD_SESSION':
-      return { ...state, sessions: [action.session, ...state.sessions] }
-    case 'REMOVE_SESSION':
-      return {
-        ...state,
-        sessions: state.sessions.filter(s => s.id !== action.id),
-      }
-    default:
-      return state
-  }
+	switch (action.type) {
+		case 'SET_SESSIONS':
+			return { ...state, sessions: action.sessions };
+		case 'SET_ACTIVE_SESSION':
+			return { ...state, activeSessionId: action.id };
+		case 'ADD_SESSION':
+			return { ...state, sessions: [action.session, ...state.sessions] };
+		case 'REMOVE_SESSION':
+			return {
+				...state,
+				sessions: state.sessions.filter(s => s.id !== action.id),
+			};
+		default:
+			return state;
+	}
 }
 
 // ---- Settings State ----
@@ -80,14 +80,14 @@ type SettingsAction =
   | { type: 'UPDATE_SETTINGS'; partial: Partial<Settings> }
 
 function settingsReducer(state: SettingsState, action: SettingsAction): SettingsState {
-  switch (action.type) {
-    case 'SET_SETTINGS':
-      return { settings: action.settings }
-    case 'UPDATE_SETTINGS':
-      return { settings: { ...state.settings, ...action.partial } }
-    default:
-      return state
-  }
+	switch (action.type) {
+		case 'SET_SETTINGS':
+			return { settings: action.settings };
+		case 'UPDATE_SETTINGS':
+			return { settings: { ...state.settings, ...action.partial } };
+		default:
+			return state;
+	}
 }
 
 // ---- Combined Context ----
@@ -103,56 +103,56 @@ type AppAction =
   | { domain: 'settings'; action: SettingsAction }
 
 function appReducer(state: AppState, action: AppAction): AppState {
-  switch (action.domain) {
-    case 'chat':
-      return { ...state, chat: chatReducer(state.chat, action.action) }
-    case 'session':
-      return { ...state, session: sessionReducer(state.session, action.action) }
-    case 'settings':
-      return { ...state, settings: settingsReducer(state.settings, action.action) }
-    default:
-      return state
-  }
+	switch (action.domain) {
+		case 'chat':
+			return { ...state, chat: chatReducer(state.chat, action.action) };
+		case 'session':
+			return { ...state, session: sessionReducer(state.session, action.action) };
+		case 'settings':
+			return { ...state, settings: settingsReducer(state.settings, action.action) };
+		default:
+			return state;
+	}
 }
 
 const initialState: AppState = {
-  chat: {
-    messages: [],
-    isProcessing: false,
-    currentSkill: null,
-  },
-  session: {
-    sessions: [],
-    activeSessionId: null,
-  },
-  settings: {
-    settings: {
-      language: 'zh-CN',
-      theme: 'light',
-      model: 'claude-sonnet-4-20250514',
-      apiKeyConfigured: false,
-    },
-  },
-}
+	chat: {
+		messages: [],
+		isProcessing: false,
+		currentSkill: null,
+	},
+	session: {
+		sessions: [],
+		activeSessionId: null,
+	},
+	settings: {
+		settings: {
+			language: 'zh-CN',
+			theme: 'light',
+			model: 'claude-sonnet-4-20250514',
+			apiKeyConfigured: false,
+		},
+	},
+};
 
 interface AppContextValue {
   state: AppState
   dispatch: React.Dispatch<AppAction>
 }
 
-const AppContext = createContext<AppContextValue | null>(null)
+const AppContext = createContext<AppContextValue | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(appReducer, initialState)
-  return (
-    <AppContext.Provider value={{ state, dispatch }}>
-      {children}
-    </AppContext.Provider>
-  )
+	const [state, dispatch] = useReducer(appReducer, initialState);
+	return (
+		<AppContext.Provider value={{ state, dispatch }}>
+			{children}
+		</AppContext.Provider>
+	);
 }
 
 export function useAppContext() {
-  const ctx = useContext(AppContext)
-  if (!ctx) throw new Error('useAppContext must be used within AppProvider')
-  return ctx
+	const ctx = useContext(AppContext);
+	if (!ctx) throw new Error('useAppContext must be used within AppProvider');
+	return ctx;
 }

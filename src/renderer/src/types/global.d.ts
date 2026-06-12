@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-import type { MelonApi } from '@shared/ipc'
+import type { MelonApi } from '@shared/ipc';
 
 declare global {
   interface Window {
@@ -8,4 +8,4 @@ declare global {
   }
 }
 
-export {}
+export {};

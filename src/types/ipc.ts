@@ -58,32 +58,32 @@ export interface ToolCall {
 
 // IPC 通道名称
 export const IPC_CHANNELS = {
-  // Renderer → Main (invoke)
-  HARNESS_PROMPT: 'harness:prompt',
-  HARNESS_ABORT: 'harness:abort',
-  HARNESS_SKILL: 'harness:skill',
-  HARNESS_STEER: 'harness:steer',
-  HARNESS_NAVIGATE: 'harness:navigate',
-  HARNESS_COMPACT: 'harness:compact',
-  SESSION_LIST: 'session:list',
-  SESSION_CREATE: 'session:create',
-  SESSION_SWITCH: 'session:switch',
-  MCP_CONNECT: 'mcp:connect',
-  MCP_DISCONNECT: 'mcp:disconnect',
-  MCP_LIST: 'mcp:list',
-  SETTINGS_GET: 'settings:get',
-  SETTINGS_SET: 'settings:set',
-  // Main → Renderer (send)
-  AGENT_MESSAGE_START: 'agent:message-start',
-  AGENT_MESSAGE_UPDATE: 'agent:message-update',
-  AGENT_MESSAGE_END: 'agent:message-end',
-  AGENT_TOOL_START: 'agent:tool-start',
-  AGENT_TOOL_END: 'agent:tool-end',
-  AGENT_TURN_END: 'agent:turn-end',
-  AGENT_IDLE: 'agent:idle',
-  SESSION_TREE_UPDATED: 'session:tree-updated',
-  MCP_STATUS_CHANGED: 'mcp:status-changed',
-} as const
+	// Renderer → Main (invoke)
+	HARNESS_PROMPT: 'harness:prompt',
+	HARNESS_ABORT: 'harness:abort',
+	HARNESS_SKILL: 'harness:skill',
+	HARNESS_STEER: 'harness:steer',
+	HARNESS_NAVIGATE: 'harness:navigate',
+	HARNESS_COMPACT: 'harness:compact',
+	SESSION_LIST: 'session:list',
+	SESSION_CREATE: 'session:create',
+	SESSION_SWITCH: 'session:switch',
+	MCP_CONNECT: 'mcp:connect',
+	MCP_DISCONNECT: 'mcp:disconnect',
+	MCP_LIST: 'mcp:list',
+	SETTINGS_GET: 'settings:get',
+	SETTINGS_SET: 'settings:set',
+	// Main → Renderer (send)
+	AGENT_MESSAGE_START: 'agent:message-start',
+	AGENT_MESSAGE_UPDATE: 'agent:message-update',
+	AGENT_MESSAGE_END: 'agent:message-end',
+	AGENT_TOOL_START: 'agent:tool-start',
+	AGENT_TOOL_END: 'agent:tool-end',
+	AGENT_TURN_END: 'agent:turn-end',
+	AGENT_IDLE: 'agent:idle',
+	SESSION_TREE_UPDATED: 'session:tree-updated',
+	MCP_STATUS_CHANGED: 'mcp:status-changed',
+} as const;
 
 // Main → Renderer 事件 payload
 export interface MelonEventPayloadMap {

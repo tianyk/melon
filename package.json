@@ -10,7 +10,8 @@
     "preview": "electron-vite preview",
     "package": "electron-builder build --config electron-builder.config.js",
     "package:mac": "electron-builder build --mac --config electron-builder.config.js",
-    "lint": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "pnpm typecheck && eslint ."
   },
   "author": "",
   "packageManager": "pnpm@10.30.2",
@@ -38,6 +39,7 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.4",
     "@tailwindcss/vite": "^4.3.0",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
@@ -45,7 +47,12 @@
     "electron": "^42.4.0",
     "electron-builder": "^26.15.2",
     "electron-vite": "^5.0.0",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.6.0",
     "tailwindcss": "^4.3.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.61.0"
   }
 }
