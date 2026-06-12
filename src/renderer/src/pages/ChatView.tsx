@@ -47,11 +47,6 @@ export function ChatView() {
 
 	return (
 		<div className="flex flex-col h-full">
-			{/* Header */}
-			<div className="flex items-center justify-center px-6 h-14 border-b border-border shrink-0">
-				<h1 className="text-sm text-muted-foreground">有什么可以帮你的？</h1>
-			</div>
-
 			{/* Skill Panel */}
 			<div className="px-6 py-3 border-b border-border shrink-0">
 				<SkillChips onSelect={handleSelectSkill} />

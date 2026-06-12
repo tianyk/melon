@@ -90,17 +90,35 @@ function settingsReducer(state: SettingsState, action: SettingsAction): Settings
 	}
 }
 
+// ---- UI State ----
+interface UiState {
+  sidebarCollapsed: boolean
+}
+
+type UiAction = { type: 'TOGGLE_SIDEBAR' }
+
+function uiReducer(state: UiState, action: UiAction): UiState {
+	switch (action.type) {
+		case 'TOGGLE_SIDEBAR':
+			return { ...state, sidebarCollapsed: !state.sidebarCollapsed };
+		default:
+			return state;
+	}
+}
+
 // ---- Combined Context ----
 interface AppState {
   chat: ChatState
   session: SessionState
   settings: SettingsState
+  ui: UiState
 }
 
 type AppAction =
   | { domain: 'chat'; action: ChatAction }
   | { domain: 'session'; action: SessionAction }
   | { domain: 'settings'; action: SettingsAction }
+  | { domain: 'ui'; action: UiAction }
 
 function appReducer(state: AppState, action: AppAction): AppState {
 	switch (action.domain) {
@@ -110,6 +128,8 @@ function appReducer(state: AppState, action: AppAction): AppState {
 			return { ...state, session: sessionReducer(state.session, action.action) };
 		case 'settings':
 			return { ...state, settings: settingsReducer(state.settings, action.action) };
+		case 'ui':
+			return { ...state, ui: uiReducer(state.ui, action.action) };
 		default:
 			return state;
 	}
@@ -132,6 +152,9 @@ const initialState: AppState = {
 			model: 'claude-sonnet-4-20250514',
 			apiKeyConfigured: false,
 		},
+	},
+	ui: {
+		sidebarCollapsed: false,
 	},
 };
 
